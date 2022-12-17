@@ -1,15 +1,19 @@
 import { useCallback } from "react";
+import { createContext } from "react";
 import { useRef, useState } from "react";
 import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
 
+
+
 const initialState = [
 
-    {id : 1, text:"useState 배우기" ,done:true},
-    {id : 2, text:"투두 리스트 만들기",done:true},
+    {id : 1, text:"useState 배우기" , done:true},
+    {id : 2, text:"투두 리스트 만들기", done:true},
 
 ];
 
+export const RemoveContext = createContext(null);
 
 function Todos() {
     //상태 관리
@@ -38,13 +42,16 @@ function Todos() {
     }, []);
 
     return (
-    <div>
 
-        <TodoInput onCreate={onCreate}/>
-        <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle} />
+    <RemoveContext.Provider value={onRemove}>
+        <div>
+
+            <TodoInput onCreate={onCreate}/>
+            <TodoList todos={todos} onToggle={onToggle} />
         
+        </div>
+    </RemoveContext.Provider>
 
-    </div>
     );
 
 }
