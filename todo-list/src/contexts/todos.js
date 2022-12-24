@@ -21,8 +21,6 @@ function reducer(state, action){
             return state;
     }
 
-
-
 }
 
 const TodoStateContext = createContext(null);
