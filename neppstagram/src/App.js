@@ -17,9 +17,12 @@ function App() {
       <Wrapper>
         <Routes>
           <Route path="/*" element={<Main />} >
-            <Route path="home" element={<Home />} />
+            <Route path="" element={<Home />} />
             <Route path="search" element={<Search />} />
-            <Route path="edit" element={<Edit />} />
+            <Route path="edit" >
+              <Route path="" element={<Edit />} />
+              <Route path=":id" element={<Edit />} />
+            </Route>
             <Route path="profile" element={<Profile />} />
           </Route>       
           <Route path="signIn" element={<SignIn />} />
@@ -39,7 +42,8 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  width: 390px;
+  width: 350px;
+  
   
 
   background-color: #fff;

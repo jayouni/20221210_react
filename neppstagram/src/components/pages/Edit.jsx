@@ -1,12 +1,15 @@
 import styled from "styled-components";
 import {BsPlusLg} from"react-icons/bs";
-import { useState } from "react";
-import { redirect } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Button } from "../common/button";
-import { postPost } from "../../api/admin";
+import { convertUrl, getPostById, postPost } from "../../api/admin";
+import { useParams } from "react-router-dom";
 
 function Edit() {
 
+  const {id} = useParams();
+
+  const [post , setPost] = useState(null);
   
 
   const [inputs,setInputs] = useState({
@@ -73,9 +76,31 @@ function Edit() {
 
   };
 
+  useEffect(() => {
+
+    if(id) {
+      getPostById(id).then((data) => {
+        setPost(data);
+        setInputs((inputs) => ({...inputs, content:data.content}));
+
+        setPreviewUrls([...data.img_list.map((img) => img.url)]);
+
+        Promise.all(
+          data.img_list.map(async(img) => {
+            const file = convertUrl(img.url);
+            return file;
+        })
+        ).then((res) => console.log(res));
+
+      });
+    }
+  },[id]);
+
   return (
     <Container>
-      <TextArea placeholder="글을 입력해주세요" onChange={(e) => setInputs((inputs) => ({...inputs, content:e.target.value}))}/>
+      <TextArea placeholder="글을 입력해주세요" value={inputs.content} onChange={(e) => setInputs((inputs) => ({...inputs, content:e.target.value}))}>
+        {post}
+      </TextArea>
     <ImagesWrapper>
       {previewUrls.map((url ,idx)=> (<Preview key={idx} url={url} />))}
 

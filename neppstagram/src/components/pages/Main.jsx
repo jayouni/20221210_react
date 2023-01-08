@@ -37,7 +37,7 @@ const Container = styled.div`
 const OutletWrapper = styled.div`
     display: flex;
     flex:1;
-
+    overflow: auto;
 `;
 
 export default Main;

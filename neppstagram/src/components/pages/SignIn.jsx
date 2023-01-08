@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { signIn } from "../../api/admin";
+import { getCurrentUser, signIn } from "../../api/admin";
+import { useUserIdDispatch } from "../../data/auth";
 import { useInputs } from "../../hook/useInputs";
 import AdminForm from "../admin/AdminForm";
 import { Button } from "../common/button";
@@ -14,17 +15,23 @@ function SignIn() {
 
   });
 
-  const navigate = useNavigate();
  
 
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const navigate = useNavigate();
   
-    signIn(inputs).then((res) => {
-      console.log("로그인성공");
-      window.localStorage.setItem("access-token" , res.data.data.token);
-      navigate("/");
-    });
+  const dispatch = useUserIdDispatch();
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    await signIn(inputs);
+
+    const user = await getCurrentUser();
+
+    dispatch(user.id);
+
+    navigate("/");
+
 
 };
 

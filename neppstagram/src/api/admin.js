@@ -32,20 +32,30 @@ export const postUser = async (form) => {
 };
 
 
-export const signIn =  (form) => {
+export const signIn =  async (form) => {
     
-    
-    return axios.post("users/login",{
+    const result = await axios.post("users/login",{
         ...form,
     });
 
+    const token = result.data.data.token;
 
+    
+
+    window.localStorage.setItem("access-token", token);
+
+    axios.defaults.headers.Authorization = `Bearer ${token}`;
+
+    console.log(token);
+
+    return true;
 
 };
 
-export const getCurrentUser = () => {
+export const getCurrentUser = async () => {
 
-    return axios.get("users/current");
+    const { data } = await axios.get("users/current");
+    return data.data;
 
 };
 
@@ -62,3 +72,64 @@ export const postPost = (form) => {
 
 
 };
+
+export const getPosts = async(page = 1) => {
+   const {data} = await axios.get(`/posts?page=${page}`);
+
+   return data.data;
+
+};
+
+export const getPostById = async (id) => {
+
+    const {data} = await axios.get("/posts/" + id);
+
+    return data;
+}
+
+
+export const getComments = async (postId , page = 1) => {
+
+    const {data} = await axios.get("/comments",{
+        params : {
+
+            page,
+            postId,
+        },
+    });
+
+    console.log(data);
+    return data.data ;
+
+};
+
+
+export const postComments = async ( form ) => {
+
+    const { data } = await axios.post(`/comments?postId=${form.postId}&content=${form.content}`);
+    
+    console.log(data);
+    return data.data;
+};
+
+export const deleteComment = async(commentId) => {
+
+    const {data} = await axios.delete(`/comments/${commentId}`);
+
+    return data;
+};
+
+
+export const convertUrl = async (url) => {
+
+    const res = await fetch(url);
+    const data = await res.blob();
+    const ext = url.split(".").pop();
+    const filename = url.split("/").pop();
+    const metadata = {type : `image/${ext}`};
+
+    return new File([data],filename,metadata);
+
+
+};
+

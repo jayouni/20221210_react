@@ -17,7 +17,7 @@ function Profile() {
     };
 
     useEffect(()=>{
-        getCurrentUser().then((res) => setUser(res.data.data));
+        getCurrentUser().then((data) => setUser(data));
     },[]);
 
     
