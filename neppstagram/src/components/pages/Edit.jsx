@@ -3,7 +3,7 @@ import {BsPlusLg} from"react-icons/bs";
 import { useEffect, useState } from "react";
 import { Button } from "../common/button";
 import { convertUrl, getPostById, postPost } from "../../api/admin";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function Edit() {
 
@@ -11,6 +11,7 @@ function Edit() {
 
   const [post , setPost] = useState(null);
   
+  const navigate = useNavigate();
 
   const [inputs,setInputs] = useState({
     content:"",
@@ -63,7 +64,7 @@ function Edit() {
   };
 
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     const form = new FormData();
 
@@ -72,8 +73,19 @@ function Edit() {
       form.append("images" , image);
     });
 
-    postPost(form).then((res) => console.log(res));
+    for(let pair of form.entries()){
+      console.log(pair[0],pair[1]);
+    }
 
+    try { 
+      const post = await postPost(form);
+
+      
+      navigate("/post/"+post.id);
+
+    }catch(e){
+      alert(e.response.data.message);
+    }
   };
 
   useEffect(() => {

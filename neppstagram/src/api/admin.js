@@ -18,21 +18,19 @@ if(token) {
 
 export const postUser = async (form) => {
     
-    try {
+    
     const result = await axios.post("users",{
         ...form,
     });
 
     return result;
 
-    } catch (err) {
-        console.log(err);
-    }
 
 };
 
 
 export const signIn =  async (form) => {
+    
     
     const result = await axios.post("users/login",{
         ...form,
@@ -66,10 +64,11 @@ export const patchProfile = (form) => {
 };
 
 
-export const postPost = (form) => {
+export const postPost = async(form) => {
 
-    return axios.post("posts", form);
+    const { data } = await axios.post("posts", form);
 
+    return data.data;
 
 };
 
@@ -102,6 +101,30 @@ export const getComments = async (postId , page = 1) => {
     return data.data ;
 
 };
+
+export const searchUser = async (name) => {
+
+    const { data } = await axios.get("/users/search" ,{
+        params : {
+            name,
+        },
+    });
+
+    return data;
+};
+
+export const getUserById = async (id) => {
+   const {data} = await axios.get("/users/" + id);
+
+   return data.data;
+}
+
+export const getPostsByUserId = async (id) => {
+    const {data} = await axios.get("/posts/author/" + id);
+ 
+    return data.data;
+ }
+
 
 
 export const postComments = async ( form ) => {

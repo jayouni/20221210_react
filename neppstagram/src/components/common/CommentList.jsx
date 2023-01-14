@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
+import { useMutation, useQuery } from "react-query";
 import styled from "styled-components";
+import { client } from "../..";
 import { deleteComment, getComments, postComments, subComments } from "../../api/admin";
 import { useUserId } from "../../data/auth";
 
@@ -26,38 +28,82 @@ function CommentList({postId}) {
         
     },[postId, page]);
 
-    const handleSubmit = async () => {
-        if(input.length === 0) {
-            alert("댓글을 입력해주세요.");
-            return;
+    const commentsMutate = useMutation(postComments, {
+        onSuccess : () => {
+            //댓글 등록 성공시 최신 데이터 다시 받아오기
+            client.invalidateQueries("comments");
+        },
+        onError : (err) => {
+            alert(err.response.data.message);
         }
-        const result = await postComments({postId , content : input });
-       
-        setCommentList([result, ...commentList]);
-    
-       
+    });
+
+    const { data , isLoading , error } = useQuery(
+        "comments", 
+        () =>  getComments(postId,page),
+        {
+            onSuccess : (data) => console.log(data),
+
+        }
+    );
+
+    const handleSubmit = () => {
+        commentsMutate.mutate({postId,content : input});
     };
 
-    const handleDelete = async (commentId) => {
+    
+    // const handleSubmit = async () => {
+    //     if(input.length === 0) {
+    //         alert("댓글을 입력해주세요.");
+    //         return;
+    //     }
+    //     //const result = await postComments({postId , content : input });
+       
+    //     //setCommentList([result, ...commentList]);
+    
+    // };
+
+
+    const commentsDeleteMutate = useMutation(deleteComment, {
+        onSuccess : () => {
+            client.invalidateQueries("comments");
+        },
+        onError : (err) => {
+            alert(err.response.data.message);
+        }
+    });
+
+
+
+    // const handleDelete = async (commentId) => {
+
+    //     if(!window.confirm("댓글을 삭제하시겠습니까 ?")) return;
+
+    //     await deleteComment(commentId);
+
+    //     setCommentList(commentList.filter((comment) => comment.id !== commentId))
+    // };
+
+
+    const handleDelete =  async (commentId) => {
 
         if(!window.confirm("댓글을 삭제하시겠습니까 ?")) return;
 
-        await deleteComment(commentId);
-
-        setCommentList(commentList.filter((comment) => comment.id !== commentId))
+        commentsDeleteMutate.mutate(commentId);
     };
 
 
-    useEffect(() => {
-        getData();
+    // useEffect(() => {
+    //     getData();
     
-    },[getData]);
+    // },[getData]);
 
 
+    if(isLoading) return <div>로딩중 ...</div>;
 
   return (
     <Container>
-        {commentList.map((comment , idx) => (
+        {data.map((comment , idx) => (
             <CommentItem key={idx}><p>{comment.content}</p>
                 {currentUserId === comment.author.id &&<BtnDelete onClick={() => handleDelete(comment.id)}>삭제</BtnDelete>}
             </CommentItem>

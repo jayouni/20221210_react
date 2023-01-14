@@ -9,6 +9,7 @@ import Search from "./components/pages/Search";
 
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
+import User from "./components/pages/User";
 
 
 function App() {
@@ -24,10 +25,12 @@ function App() {
               <Route path=":id" element={<Edit />} />
             </Route>
             <Route path="profile" element={<Profile />} />
+            <Route path="user/:id" element={<User />} />
           </Route>       
           <Route path="signIn" element={<SignIn />} />
           <Route path="signUp" element={<SignUp />} />
         </Routes>
+        
       </Wrapper>
     </Container>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import styled from "styled-components";
 import {  getCurrentUser, getPosts } from "../../api/admin";
 import { useUserId, useUserIdDispatch } from "../../data/auth";
@@ -11,6 +12,19 @@ function Home() {
   const [page , setPage] = useState(1);
   const [isLast , setIsLast] = useState(false);
   const dispatch = useUserIdDispatch();
+
+  const { data,isLoading} = useQuery("posts" , () => getPosts(page) ,{
+    onSuccess : () => {
+      console.log("데이터를 받아오는데 성공했습니다. ");
+    },
+    onError: (err) => {
+      alert(err.response.data.message);
+    }
+  });
+
+
+  useEffect(() => {},[]);
+
 
   useEffect(() => {
 
@@ -26,9 +40,10 @@ function Home() {
       setPostList((postList) => [...postList, ...data])
 
     });
-    
       
   }, [page]);
+
+  if(isLoading) return <div>로딩 중 ...</div>;
 
 
   return (

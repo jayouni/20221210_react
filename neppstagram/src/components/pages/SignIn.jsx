@@ -23,14 +23,20 @@ function SignIn() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    try{
+      await signIn(inputs);
 
-    await signIn(inputs);
+      const user = await getCurrentUser();
+  
+      dispatch(user.id);
+  
+      navigate("/");
 
-    const user = await getCurrentUser();
+    } catch (err) {
+      alert(err.response.data.message);
+    }
 
-    dispatch(user.id);
 
-    navigate("/");
 
 
 };
